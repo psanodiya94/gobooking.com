@@ -1,0 +1,30 @@
+{{ template "base" . }}
+
+{{ define "title" }}
+    <title>Home</title>
+{{ end }}
+
+{{ define "css" }}
+    <style>
+        .container {
+            margin-top: 100px;
+        }
+    </style>
+{{ end }}
+
+{{ define "content" }}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="display-4">Welcome!</h1>
+                <p>This is a simple web application built with Go and Bootstrap.</p>
+            </div>
+        </div>
+    </div>
+{{ end }}
+
+{{ define "js" }}
+    <script>
+        console.log("Web application built with Go and Bootstrap.");
+    </script>
+{{ end }}
