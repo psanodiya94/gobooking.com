@@ -4,9 +4,9 @@ GoBooking.com is a booking and reservation project built with Go 1.23.4. This pr
 
 ## Features
 
+- **CSRF Protection**: Implements CSRF protection using nosurf.
 - **Chi Router**: A lightweight, idiomatic and composable router for building Go HTTP services.
 - **Session Management**: Utilizes Alex Edwards' SCS session management for secure and efficient session handling.
-- **CSRF Protection**: Implements CSRF protection using [nosurf](https://github.com/justinas/nosurf).
 
 ## Installation
 
@@ -37,10 +37,9 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 
+- [nosurf](https://github.com/justinas/nosurf)
 - [Chi Router](https://github.com/go-chi/chi)
 - [SCS Session Management](https://github.com/alexedwards/scs)
-- [nosurf](https://github.com/justinas/nosurf)
