@@ -1,0 +1,57 @@
+{{ template "base" . }}
+
+{{ define "content" }}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <h1 class="mt-3">Search for Availability</h1>
+
+                <form action="/search-availability" method="post" class="needs-validation" novalidate>
+                    <label>
+                        <input hidden type="text" name="csrf_token" value="{{ .CSRFToken }}">
+                    </label>
+                    <div class="form-row">
+                        <div class="col">
+                            <div id="reservation-dates" class="form-row">
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label>
+                                            <input required type="text" class="form-control" name="start_date" placeholder="Arrival Date">
+                                        </label>
+                                    </div>
+                                </div>
+                            
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label>
+                                            <input required type="text" class="form-control" name="end_date" placeholder="Departure Date">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <button type="submit" id="search_availability" class="btn btn-primary">Search Availability</button>
+                
+                </form>
+            </div>
+        </div> 
+    </div>
+
+{{ end }}
+
+{{ define "scripts" }}
+    <script>
+        const elem = document.getElementById('reservation-dates');
+        const rangepicker = new DateRangePicker(elem, {
+            format: 'yyyy-mm-dd',
+            showOnFocus: true,
+            autoClose: true
+        });
+    </script>
+{{ end }}

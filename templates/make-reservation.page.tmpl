@@ -1,0 +1,36 @@
+{{ template "base" . }}
+
+{{ define "content" }}
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>Make Reservation</h1>
+
+                <form method="post" class="needs-validation" novalidate>
+                    <div class="form-group mt-5">
+                        <label for=""first_name">First Name</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for=""last_name">Last Name</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for=""email">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for=""phone">Phone:</label>
+                        <input type="phone" class="form-control" id="phone" name="phone" required autocomplete="off">
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+{{ end }}
