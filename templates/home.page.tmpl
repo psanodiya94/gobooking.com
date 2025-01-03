@@ -1,30 +1,77 @@
 {{ template "base" . }}
 
-{{ define "title" }}
-    <title>Home</title>
-{{ end }}
-
-{{ define "css" }}
-    <style>
-        .container {
-            margin-top: 100px;
-        }
-    </style>
-{{ end }}
-
 {{ define "content" }}
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1 class="display-4">Welcome!</h1>
-                <p>This is a simple web application built with Go and Bootstrap.</p>
+
+    <div id="main-carousel" class="carousel slide carousel-fade" data-ride="carousel">
+
+        <ol class="carousel-indicators">
+            <li data-target="#main-carousel" data-slide-to="0" class="active"></li>
+            <li data-target="#main-carousel" data-slide-to="1"></li>
+            <li data-target="#main-carousel" data-slide-to="2"></li>
+        </ol>
+
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="/static/images/woman-laptop.png" class="d-block w-100" alt="Woman and laptop">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>First slide label</h5>
+                    <p>
+                        Experience the luxury and comfort of our exclusive quarters, designed to provide you with the ultimate relaxation and convenience. Whether you choose the General's Quarters or the Major's Suite, each room is equipped with modern amenities and offers stunning views. Book your stay with GoBooking.com and enjoy a memorable getaway.
+                    </p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="/static/images/tray.png" class="d-block w-100" alt="Tray with coffee">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Second slide label</h5>
+                    <p>
+                        Experience the luxury and comfort of our exclusive quarters, designed to provide you with the ultimate relaxation and convenience. Whether you choose the General's Quarters or the Major's Suite, each room is equipped with modern amenities and offers stunning views. Book your stay with GoBooking.com and enjoy a memorable getaway.
+                    </p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="/static/images/outside.png" class="d-block w-100" alt="Outside">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Third slide label</h5>
+                    <p>
+                        Experience the luxury and comfort of our exclusive quarters, designed to provide you with the ultimate relaxation and convenience. Whether you choose the General's Quarters or the Major's Suite, each room is equipped with modern amenities and offers stunning views. Book your stay with GoBooking.com and enjoy a memorable getaway.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-{{ end }}
 
-{{ define "js" }}
-    <script>
-        console.log("Web application built with Go and Bootstrap.");
-    </script>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center mt-4">Welcome to GoBooking Bed and Breakfast</h1>
+                <p>
+                    Your home away form home, set on the majestic waters of the Atlantic Ocean, this will be a vacation
+                    to remember.
+                    Your home away form home, set on the majestic waters of the Atlantic Ocean, this will be a vacation
+                    to remember.
+                    Your home away form home, set on the majestic waters of the Atlantic Ocean, this will be a vacation
+                    to remember.
+                    Your home away form home, set on the majestic waters of the Atlantic Ocean, this will be a vacation
+                    to remember.
+                    Your home away form home, set on the majestic waters of the Atlantic Ocean, this will be a vacation
+                    to remember.
+                    Your home away form home, set on the majestic waters of the Atlantic Ocean, this will be a vacation
+                    to remember.
+                    Your home away form home, set on the majestic waters of the Atlantic Ocean, this will be a vacation
+                    to remember.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col text-center">
+
+                <a href="/search-availability" class="btn btn-success">Make Reservation Now</a>
+
+            </div>
+        </div>
+    </div>
+
 {{ end }}

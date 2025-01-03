@@ -1,40 +1,13 @@
 {{ template "base" . }}
 
-{{ define "title" }}
-    <title>About</title>
-{{ end }}
-
-{{ define "css" }}
-    <style>
-        .container {
-            margin-top: 100px;
-        }
-    </style>
-{{ end }}
-
 {{ define "content" }}
+
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
-                <h1 class="display-4">Welcome!</h1>
-                <p>This is a simple web application built with Go and Bootstrap.</p>
-
-                <p>This Just Came from the template: {{ index .StringMap "test" }}</p>
-
-                <p>
-                    {{ if ne (index .StringMap "remote_ip") "" }}
-                        You are logged in from {{ index .StringMap "remote_ip" }}
-                    {{ else }}
-                        You are not logged in. vist <a href="/">Home Page</a>
-                    {{ end }}
-                </p>
+            <div class="col">
+                <h1> about </h1>
             </div>
         </div>
     </div>
-{{ end }}
 
-{{ define "js" }}
-    <script>
-        console.log("Web application built with Go and Bootstrap.");
-    </script>
 {{ end }}

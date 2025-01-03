@@ -1,14 +1,14 @@
 package main
 
 import (
+	"github.com/psanodiya94/gobooking.com/internal/config"
+	"github.com/psanodiya94/gobooking.com/internal/handlers"
+	"github.com/psanodiya94/gobooking.com/internal/render"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/psanodiya94/gobooking.com/pkg/config"
-	"github.com/psanodiya94/gobooking.com/pkg/handlers"
-	"github.com/psanodiya94/gobooking.com/pkg/render"
 )
 
 const port = ":8080"
@@ -16,7 +16,6 @@ const port = ":8080"
 var app config.AppConfig
 var session *scs.SessionManager
 
-/*---------------------------------------------------------------------------*/
 func main() {
 
 	// change this to true when in production

@@ -15,5 +15,3 @@ type AppConfig struct {
 	InfoLogs      *log.Logger
 	Session       *scs.SessionManager
 }
-
-/*---------------------------------------------------------------------------*/
