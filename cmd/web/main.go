@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/gob"
 	"github.com/psanodiya94/gobooking.com/internal/config"
 	"github.com/psanodiya94/gobooking.com/internal/handlers"
+	"github.com/psanodiya94/gobooking.com/internal/models"
 	"github.com/psanodiya94/gobooking.com/internal/render"
 	"log"
 	"net/http"
@@ -17,6 +19,26 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+	err := run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Starting application on port", port)
+
+	serve := &http.Server{
+		Addr:    port,
+		Handler: routes(&app),
+	}
+
+	err = serve.ListenAndServe()
+	log.Fatal(err)
+}
+
+func run() error {
+
+	// what am i going to put in the session
+	gob.Register(models.Reservation{})
 
 	// change this to true when in production
 	app.InProduction = false
@@ -32,6 +54,7 @@ func main() {
 	tmplCache, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("Cannot create template cache")
+		return err
 	}
 
 	app.TemplateCache = tmplCache
@@ -42,15 +65,5 @@ func main() {
 
 	render.NewTemplates(&app)
 
-	log.Println("Server running on port", port)
-
-	serve := &http.Server{
-		Addr:    port,
-		Handler: routes(&app),
-	}
-
-	err = serve.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
+	return nil
 }

@@ -1,4 +1,4 @@
-{{ define "base" }}
+{{define "base"}}
 <!doctype html>
 <html lang="en">
     <head>
@@ -50,9 +50,9 @@
             </div>
         </nav>
 
-        {{ block "content" . }}
+        {{block "content" .}}
 
-        {{ end }}
+        {{end}}
 
         <footer class="my-footer">
             <div class="row">
@@ -114,6 +114,18 @@
                     confirmButtonText: confirmButtonText
                 });
             }
+
+            {{with .Error}}
+                notify("{{.}}", "error");
+            {{end}}
+
+            {{with .Warning}}
+                notify("{{.}}", "warning");
+            {{end}}
+
+            {{with .Flash}}
+                notify("{{.}}", "success");
+            {{end}}
 
             function Prompt() {
                 let toast = function(options) {
@@ -223,9 +235,9 @@
             }
         </script>
 
-        {{ block "scripts" . }}
+        {{block "scripts" .}}
 
-        {{ end }}
+        {{end}}
     </body>
 </html>
-{{ end }}
+{{end}}

@@ -1,6 +1,6 @@
-{{ template "base" . }}
+{{template "base" .}}
 
-{{ define "content" }}
+{{define "content"}}
 
     <div class="container">
         <div class="row">
@@ -40,9 +40,9 @@
         </div>
     </div>
 
-{{ end }}
+{{end}}
 
-{{ define "scripts" }}
+{{define "scripts"}}
     <script>
         document.getElementById('check-availability-button').addEventListener('click', function (e) {
             let html =`
@@ -51,11 +51,11 @@
                         <div class="col">
                             <div id="reservation-dates-model" class="form-row">
                                 <div class="col">
-                                    <input disabled required type="text" class="form-control" id="start" name="start" placeholder="Arrival">
+                                    <input disabled required type="text" class="form-control" id="start" name="start" placeholder="Check In">
                                 </div>
 
                                 <div class="col">
-                                    <input disabled required type="text" class="form-control" id="end" name="end" placeholder="Departure">
+                                    <input disabled required type="text" class="form-control" id="end" name="end" placeholder="Check In">
                                 </div>
                             </div>
                         </div>
@@ -65,4 +65,4 @@
             attention.custom({text: html, title: "Check Availability"});
         });
     </script>
-{{ end }}
+{{end}}
