@@ -7,10 +7,12 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/psanodiya94/gobooking.com/internal/config"
+	"github.com/psanodiya94/gobooking.com/internal/helpers"
 	"github.com/psanodiya94/gobooking.com/internal/models"
 	"github.com/psanodiya94/gobooking.com/internal/render"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"text/template"
 	"time"
@@ -20,12 +22,21 @@ var functions = template.FuncMap{}
 
 var app config.AppConfig
 var session *scs.SessionManager
+var infoLog *log.Logger
+var errorLog *log.Logger
 var templatePath = "./../../templates"
 
 func getRoutes() http.Handler {
 
 	// what am i going to put in the session
 	gob.Register(models.Reservation{})
+
+	// initialize loggers
+	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	app.InfoLog = infoLog
+	app.ErrorLog = errorLog
 
 	// change this to true when in production
 	app.InProduction = false
@@ -49,6 +60,7 @@ func getRoutes() http.Handler {
 	repo := NewRepo(&app)
 	NewHandlers(repo)
 
+	helpers.NewHelpers(&app)
 	render.NewTemplates(&app)
 
 	mux := chi.NewRouter()

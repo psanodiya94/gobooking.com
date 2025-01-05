@@ -4,10 +4,12 @@ import (
 	"encoding/gob"
 	"github.com/psanodiya94/gobooking.com/internal/config"
 	"github.com/psanodiya94/gobooking.com/internal/handlers"
+	"github.com/psanodiya94/gobooking.com/internal/helpers"
 	"github.com/psanodiya94/gobooking.com/internal/models"
 	"github.com/psanodiya94/gobooking.com/internal/render"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
@@ -17,6 +19,8 @@ const port = ":8080"
 
 var app config.AppConfig
 var session *scs.SessionManager
+var infoLog *log.Logger
+var errorLog *log.Logger
 
 func main() {
 	err := run()
@@ -36,9 +40,15 @@ func main() {
 }
 
 func run() error {
-
-	// what am i going to put in the session
+	// what will be put in the session
 	gob.Register(models.Reservation{})
+
+	// initialize loggers
+	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	app.InfoLog = infoLog
+	app.ErrorLog = errorLog
 
 	// change this to true when in production
 	app.InProduction = false
@@ -61,8 +71,9 @@ func run() error {
 	app.UseCache = false
 
 	repo := handlers.NewRepo(&app)
-	handlers.NewHandlers(repo)
 
+	handlers.NewHandlers(repo)
+	helpers.NewHelpers(&app)
 	render.NewTemplates(&app)
 
 	return nil
