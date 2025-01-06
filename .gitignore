@@ -35,3 +35,6 @@ go.work
 
 # Go debugging files
 __debug_bin
+
+# database.yml file
+database.yml
