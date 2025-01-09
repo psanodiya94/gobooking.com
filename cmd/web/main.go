@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/gob"
 	"github.com/psanodiya94/gobooking.com/internal/config"
+	"github.com/psanodiya94/gobooking.com/internal/driver"
 	"github.com/psanodiya94/gobooking.com/internal/handlers"
 	"github.com/psanodiya94/gobooking.com/internal/helpers"
 	"github.com/psanodiya94/gobooking.com/internal/models"
@@ -23,10 +24,11 @@ var infoLog *log.Logger
 var errorLog *log.Logger
 
 func main() {
-	err := run()
+	db, err := run()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.SQL.Close()
 
 	log.Println("Starting application on port", port)
 
@@ -39,9 +41,12 @@ func main() {
 	log.Fatal(err)
 }
 
-func run() error {
+func run() (*driver.DataBase, error) {
 	// what will be put in the session
+	gob.Register(models.User{})
+	gob.Register(models.Room{})
 	gob.Register(models.Reservation{})
+	gob.Register(models.Restriction{})
 
 	// initialize loggers
 	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -61,20 +66,29 @@ func run() error {
 
 	app.Session = session
 
+	// connect to database
+	log.Println("Connecting to database...")
+	db, err := driver.ConnectSql("host=localhost port=5432 dbname=gobookings user=postgres password=Rishirich11!")
+	if err != nil {
+		log.Fatal("Can't connect to database! Dying...")
+		return nil, err
+	}
+	log.Println("Connected to database!")
+
 	tmplCache, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("Cannot create template cache")
-		return err
+		return nil, err
 	}
 
 	app.TemplateCache = tmplCache
 	app.UseCache = false
 
-	repo := handlers.NewRepo(&app)
+	repo := handlers.NewRepo(&app, db)
 
 	handlers.NewHandlers(repo)
 	helpers.NewHelpers(&app)
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 
-	return nil
+	return db, nil
 }

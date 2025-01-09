@@ -10,7 +10,7 @@
 
                 <form action="/search-availability" method="post" class="needs-validation" novalidate>
                     <label>
-                        <input hidden type="text" name="csrf_token" value="{{.CSRFToken}}">
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                     </label>
                     <div class="form-row">
                         <div class="col">
@@ -18,7 +18,7 @@
                                 <div class="col">
                                     <div class="mb-3">
                                         <label>
-                                            <input required type="text" class="form-control" name="start_date" placeholder="Check In Date">
+                                            <input required type="text" class="form-control" name="check_in" placeholder="Check In Date">
                                         </label>
                                     </div>
                                 </div>
@@ -26,7 +26,7 @@
                                 <div class="col">
                                     <div class="mb-3">
                                         <label>
-                                            <input required type="text" class="form-control" name="end_date" placeholder="Check In Date">
+                                            <input required type="text" class="form-control" name="check_out" placeholder="Check In Date">
                                         </label>
                                     </div>
                                 </div>
@@ -50,8 +50,7 @@
         const elem = document.getElementById('reservation-dates');
         const rangepicker = new DateRangePicker(elem, {
             format: 'yyyy-mm-dd',
-            showOnFocus: true,
-            autoClose: true
+            minDate: new Date(),
         });
     </script>
 {{end}}

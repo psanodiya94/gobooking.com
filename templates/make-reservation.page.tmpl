@@ -10,10 +10,26 @@
 
                 {{$result := index .Data "reservation"}}
 
+                <p>
+                    <strong>Room: </strong>{{$result.Room.RoomName}}<br>
+                    <strong>Check In: </strong>{{index .StringMap "check_in"}}<br>
+                    <strong>Check Out: </strong>{{index .StringMap "check_out"}}<br>
+                </p>
+
                 <form action="/make-reservation" method="post" class="" novalidate>
                     <label>
-                        <input hidden type="text" name="csrf_token" value="{{.CSRFToken}}">
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                     </label>
+                    <label>
+                        <input type="hidden" name="check_in" value="{{index .StringMap "check_in"}}">
+                    </label>
+                    <label>
+                        <input type="hidden" name="check_out" value="{{index .StringMap "check_out"}}">
+                    </label>
+                    <label>
+                        <input type="hidden" name="room_id" value="{{$result.RoomId}}">
+                    </label>
+
                     <div class="form-group mt-3">
                         <label for="first_name">First Name:</label>
                         {{with .Form.Errors.Get "first_name"}}
@@ -61,5 +77,4 @@
             </div>
         </div>
     </div>
-
 {{end}}

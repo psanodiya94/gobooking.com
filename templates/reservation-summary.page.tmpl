@@ -15,12 +15,16 @@
                         <td>{{$result.FirstName}} {{$result.LastName}}</td>
                     </tr>
                     <tr>
+                        <td>Room:</td>
+                        <td>{{$result.Room.RoomName}}</td>
+                    </tr>
+                    <tr>
                         <td>Check In:</td>
-                        <td></td>
+                        <td>{{index .StringMap "check_in"}}</td>
                     </tr>
                     <tr>
                         <td>Check Out:</td>
-                        <td></td>
+                        <td>{{index .StringMap "check_out"}}</td>
                     </tr>
                     <tr>
                         <td>Email:</td>
