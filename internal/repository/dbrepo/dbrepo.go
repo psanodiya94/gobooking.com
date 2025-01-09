@@ -18,3 +18,15 @@ func NewPostgresRepo(conn *sql.DB, a *config.AppConfig) repository.DBRepo {
 		DB:  conn,
 	}
 }
+
+type testdbPostgresRepository struct {
+	App *config.AppConfig
+	DB  *sql.DB
+}
+
+// NewTestingRepo
+func NewTestingRepo(a *config.AppConfig) repository.DBRepo {
+	return &testdbPostgresRepository{
+		App: a,
+	}
+}

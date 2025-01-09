@@ -45,10 +45,10 @@
 
 {{end}}
 
-{{define "scripts"}}
+{{define "js"}}
     <script>
         const elem = document.getElementById('reservation-dates');
-        const rangepicker = new DateRangePicker(elem, {
+        const rp = new DateRangePicker(elem, {
             format: 'yyyy-mm-dd',
             minDate: new Date(),
         });

@@ -23,7 +23,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
                         <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                     </li>
@@ -76,7 +76,6 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://unpkg.com/notie"></script>
         <script src="/static/js/app.js"></script>
-{{/*        <script src="/static/js/bookings.js"></script>*/}}
 
         <script>
             let attention = Prompt();
@@ -105,7 +104,7 @@
                 notie.alert({
                     type: type,
                     text: msg,
-                });
+                })
             }
 
             function notifyModal(title, text, icon, confirmButtonText) {
@@ -114,7 +113,7 @@
                     html: text,
                     icon: icon,
                     confirmButtonText: confirmButtonText
-                });
+                })
             }
 
             {{with .Error}}
@@ -122,16 +121,16 @@
             {{end}}
 
             {{with .Warning}}
-                notify("{{.}}", "warning");
+                notify("{{.}}", "warning")
             {{end}}
 
             {{with .Flash}}
-                notify("{{.}}", "success");
+                notify("{{.}}", "success")
             {{end}}
 
         </script>
 
-        {{block "scripts" .}}
+        {{block "js" .}}
 
         {{end}}
     </body>

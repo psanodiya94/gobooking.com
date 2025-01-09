@@ -15,11 +15,11 @@ function run() {
 }
 
 function test() {
-    go test ./...
+    go test -v ./...
 }
 
 function coverage() {
-    go test -cover ./...
+    go test -coverprofile=coverage.out ./... && go tool cover -html=coverage.out
 }
 
 function cleanup() {

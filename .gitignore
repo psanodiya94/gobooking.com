@@ -8,6 +8,8 @@
 *.code-workspace
 .history/
 
+.DS_Store
+
 # IntelliJ
 .idea/
 *.iml
@@ -36,5 +38,8 @@ go.work
 # Go debugging files
 __debug_bin
 
-# database.yml file
+# project specific files
 database.yml
+coverage.out
+schema.sql
+bookings

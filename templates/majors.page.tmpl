@@ -10,7 +10,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <h1 class="text-center mt-4">Welcome to Major's Suites</h1>
+                <h1 class="text-center mt-4">Major's Suite</h1>
                 <p>
                     Your home away form home, set on the majestic waters of the Atlantic Ocean, this will be a vacation
                     to remember.
@@ -42,7 +42,7 @@
 
 {{end}}
 
-{{define "scripts"}}
+{{define "js"}}
     <script>
         // getAvailabilityForRoomById("2");
         document.getElementById('check-availability-button').addEventListener('click', function () {
@@ -50,7 +50,7 @@
                 <form id="check-availability-form" action="" method="post" class="needs-validation" novalidate>
                     <div class="form-row">
                         <div class="col">
-                            <div id="reservation-dates-model" class="form-row">
+                            <div id="reservation-dates-modal" class="form-row">
                                 <div class="col">
                                     <input disabled required type="text" class="form-control" id="start" name="start" placeholder="Check In">
                                 </div>
@@ -65,15 +65,15 @@
             `
             attention.custom({
                 text: html,
-                title: "Select your dates",
+                title: "Choose your dates",
 
                 willOpen: () => {
-                    const elem = document.getElementById('reservation-dates-model');
-                    new DateRangePicker(elem, {
+                    const elem = document.getElementById('reservation-dates-modal');
+                    const rp = new DateRangePicker(elem, {
                         format: 'yyyy-mm-dd',
                         showOnFocus: true,
                         minDate: new Date(),
-                    });
+                    })
                 },
                 didOpen: () => {
                     document.getElementById("start").removeAttribute("disabled");
@@ -114,6 +114,6 @@
                         })
                 }
             });
-        });
+        })
     </script>
 {{end}}
