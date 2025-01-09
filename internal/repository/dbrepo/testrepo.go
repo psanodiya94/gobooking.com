@@ -25,7 +25,7 @@ func (psql *testdbPostgresRepository) InsertRoomRestriction(res models.RoomRestr
 }
 
 // SearchAvailabilityForDatesByRoomId query database with dates if available for booking room
-func (psql *testdbPostgresRepository) SearchAvailabilityForDatesByRoomId(roomId int, checkIn, checkOut time.Time) (bool, error) {
+func (psql *testdbPostgresRepository) SearchAvailabilityForDatesByRoomId(_ int, checkIn, _ time.Time) (bool, error) {
 	// set up a test time
 	layout := "2006-01-02"
 	testDate, _ := time.Parse(layout, "2049-12-31")
@@ -46,7 +46,7 @@ func (psql *testdbPostgresRepository) SearchAvailabilityForDatesByRoomId(roomId 
 }
 
 // SearchAvailabilityForAllRooms returns a slice of available rooms, if any for given date range
-func (psql *testdbPostgresRepository) SearchAvailabilityForAllRooms(checkIn, checkOut time.Time) ([]models.Room, error) {
+func (psql *testdbPostgresRepository) SearchAvailabilityForAllRooms(checkIn, _ time.Time) ([]models.Room, error) {
 	var rooms []models.Room
 	// set up a test time
 	layout := "2006-01-02"

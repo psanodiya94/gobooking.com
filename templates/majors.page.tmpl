@@ -69,7 +69,7 @@
 
                 willOpen: () => {
                     const elem = document.getElementById('reservation-dates-modal');
-                    const rp = new DateRangePicker(elem, {
+                    new DateRangePicker(elem, {
                         format: 'yyyy-mm-dd',
                         showOnFocus: true,
                         minDate: new Date(),
@@ -79,7 +79,7 @@
                     document.getElementById("start").removeAttribute("disabled");
                     document.getElementById("end").removeAttribute("disabled");
                 },
-                callback: function (result) {
+                callback: function () {
                     let form = document.getElementById("check-availability-form");
                     let formData = new FormData(form);
                     formData.append("csrf_token", "{{.CSRFToken}}");
