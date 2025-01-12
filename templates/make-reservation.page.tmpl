@@ -17,21 +17,11 @@
                 </p>
 
                 <form action="/make-reservation" method="post" class="" novalidate>
-                    <label>
-                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-                    </label>
-                    <label>
-                        <input type="hidden" name="check_in" value="{{index .StringMap "check_in"}}">
-                    </label>
-                    <label>
-                        <input type="hidden" name="check_out" value="{{index .StringMap "check_out"}}">
-                    </label>
-                    <label>
-                        <input type="hidden" name="room_id" value="{{$result.RoomId}}">
-                    </label>
-                    <label>
-                        <input type="hidden" name="room_name" value="{{$result.Room.RoomName}}">
-                    </label>
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                    <input type="hidden" name="check_in" value="{{index .StringMap "check_in"}}">
+                    <input type="hidden" name="check_out" value="{{index .StringMap "check_out"}}">
+                    <input type="hidden" name="room_id" value="{{$result.RoomId}}">
+                    <input type="hidden" name="room_name" value="{{$result.Room.RoomName}}">
 
                     <div class="form-group mt-3">
                         <label for="first_name">First Name:</label>
@@ -76,7 +66,6 @@
                     <hr>
                     <input type="submit" class="btn btn-primary" value="Make Reservation">
                 </form>
-
             </div>
         </div>
     </div>

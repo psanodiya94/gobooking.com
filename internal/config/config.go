@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/psanodiya94/gobooking.com/internal/models"
 	"log"
 	"text/template"
 
@@ -15,4 +16,6 @@ type AppConfig struct {
 	InfoLog       *log.Logger
 	ErrorLog      *log.Logger
 	Session       *scs.SessionManager
+	MailChan      chan models.MailData
+	ConnString    string
 }

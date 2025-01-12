@@ -6,27 +6,27 @@ import (
 	"github.com/psanodiya94/gobooking.com/internal/repository"
 )
 
-type dbPostgresRepository struct {
+type dbPostgresRepo struct {
 	App *config.AppConfig
 	DB  *sql.DB
 }
 
 // NewPostgresRepo creates new postgres db repository
 func NewPostgresRepo(conn *sql.DB, a *config.AppConfig) repository.DBRepo {
-	return &dbPostgresRepository{
+	return &dbPostgresRepo{
 		App: a,
 		DB:  conn,
 	}
 }
 
-type testdbPostgresRepository struct {
+type testdbPostgresRepo struct {
 	App *config.AppConfig
 	DB  *sql.DB
 }
 
 // NewTestingRepo
 func NewTestingRepo(a *config.AppConfig) repository.DBRepo {
-	return &testdbPostgresRepository{
+	return &testdbPostgresRepo{
 		App: a,
 	}
 }

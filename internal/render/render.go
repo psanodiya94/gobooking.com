@@ -11,11 +11,43 @@ import (
 	"net/http"
 	"path/filepath"
 	"text/template"
+	"time"
 )
 
-var functions = template.FuncMap{}
+var functions = template.FuncMap{
+	"readableDate": ReadableDate,
+	"formatDate":   FormatDate,
+	"iterate":      Iterate,
+	"add":          Add,
+}
+
 var app *config.AppConfig
 var templatePath = "./templates"
+
+// Add adds a & b and returns
+func Add(a, b int) int {
+	return a + b
+}
+
+// Iterate returns a slice of int, starting at 1, going to count
+func Iterate(count int) []int {
+	// Create a slice of int
+	var items []int
+	for i := 0; i < count; i++ {
+		items = append(items, i)
+	}
+	return items
+}
+
+// ReadableDate returns time in YYYY-MM-DD format
+func ReadableDate(t time.Time) string {
+	return t.Format("2006-01-02")
+}
+
+// FormatDate formate date with string
+func FormatDate(t time.Time, f string) string {
+	return t.Format(f)
+}
 
 // NewRenderer sets the config for the template package
 func NewRenderer(a *config.AppConfig) {
@@ -28,6 +60,10 @@ func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 	td.Error = app.Session.PopString(r.Context(), "error")
 	td.Warning = app.Session.PopString(r.Context(), "warning")
 	td.CSRFToken = nosurf.Token(r)
+
+	if app.Session.Exists(r.Context(), "user_id") {
+		td.IsAuth = true
+	}
 
 	return td
 }

@@ -7,7 +7,7 @@ import (
 )
 
 // InsertReservation insert a reservation into database
-func (psql *testdbPostgresRepository) InsertReservation(res models.Reservation) (int, error) {
+func (psql *testdbPostgresRepo) InsertReservation(res models.Reservation) (int, error) {
 	// if the room id is 2, then fail; otherwise, pass
 	if res.RoomId == 2 {
 		return 0, errors.New("can't insert reservation for room id 2")
@@ -16,7 +16,7 @@ func (psql *testdbPostgresRepository) InsertReservation(res models.Reservation) 
 }
 
 // InsertRoomRestriction insert a room restriction into database
-func (psql *testdbPostgresRepository) InsertRoomRestriction(res models.RoomRestriction) error {
+func (psql *testdbPostgresRepo) InsertRoomRestriction(res models.RoomRestriction) error {
 	// if the room id is 1000, then fail; otherwise, pass
 	if res.RoomId == 1000 {
 		return errors.New("can't insert room restriction for room id 1000")
@@ -25,7 +25,7 @@ func (psql *testdbPostgresRepository) InsertRoomRestriction(res models.RoomRestr
 }
 
 // SearchAvailabilityForDatesByRoomId query database with dates if available for booking room
-func (psql *testdbPostgresRepository) SearchAvailabilityForDatesByRoomId(_ int, checkIn, _ time.Time) (bool, error) {
+func (psql *testdbPostgresRepo) SearchAvailabilityForDatesByRoomId(_ int, checkIn, _ time.Time) (bool, error) {
 	// set up a test time
 	layout := "2006-01-02"
 	testDate, _ := time.Parse(layout, "2049-12-31")
@@ -46,7 +46,7 @@ func (psql *testdbPostgresRepository) SearchAvailabilityForDatesByRoomId(_ int, 
 }
 
 // SearchAvailabilityForAllRooms returns a slice of available rooms, if any for given date range
-func (psql *testdbPostgresRepository) SearchAvailabilityForAllRooms(checkIn, _ time.Time) ([]models.Room, error) {
+func (psql *testdbPostgresRepo) SearchAvailabilityForAllRooms(checkIn, _ time.Time) ([]models.Room, error) {
 	var rooms []models.Room
 	// set up a test time
 	layout := "2006-01-02"
@@ -73,10 +73,68 @@ func (psql *testdbPostgresRepository) SearchAvailabilityForAllRooms(checkIn, _ t
 }
 
 // GetRoomById get a room by id
-func (psql *testdbPostgresRepository) GetRoomById(id int) (models.Room, error) {
+func (psql *testdbPostgresRepo) GetRoomById(id int) (models.Room, error) {
 	var room models.Room
 	if id > 2 {
 		return room, errors.New("can't find room with id greater than 2")
 	}
 	return room, nil
+}
+
+func (psql *testdbPostgresRepo) GetUserById(id int) (models.User, error) {
+	var u models.User
+	return u, nil
+}
+
+func (psql *testdbPostgresRepo) UpdateUser(user models.User) error {
+	return nil
+}
+
+func (psql *testdbPostgresRepo) Authenticate(email, password string) (int, string, error) {
+	return 1, "", nil
+}
+
+func (psql *testdbPostgresRepo) AllReservations() ([]models.Reservation, error) {
+	var reservations []models.Reservation
+	return reservations, nil
+}
+
+func (psql *testdbPostgresRepo) AllNewReservations() ([]models.Reservation, error) {
+	var reservations []models.Reservation
+	return reservations, nil
+}
+
+func (psql *testdbPostgresRepo) GetReservationById(id int) (models.Reservation, error) {
+	var res models.Reservation
+	return res, nil
+}
+
+func (psql *testdbPostgresRepo) UpdateReservation(reservation models.Reservation) error {
+	return nil
+}
+
+func (psql *testdbPostgresRepo) DeleteReservation(id int) error {
+	return nil
+}
+
+func (psql *testdbPostgresRepo) UpdateProcessedForReservation(id, processed int) error {
+	return nil
+}
+
+func (psql *testdbPostgresRepo) AllRooms() ([]models.Room, error) {
+	var rooms []models.Room
+	return rooms, nil
+}
+
+func (psql *testdbPostgresRepo) GetRestrictionsForRoomByDate(roomId int, start, end time.Time) ([]models.RoomRestriction, error) {
+	var restrictions []models.RoomRestriction
+	return restrictions, nil
+}
+
+func (psql *testdbPostgresRepo) InsertBlockForRoom(id int, startDate time.Time) error {
+	return nil
+}
+
+func (psql *testdbPostgresRepo) DeleteBlockById(id int) error {
+	return nil
 }

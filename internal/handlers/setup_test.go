@@ -18,7 +18,12 @@ import (
 	"time"
 )
 
-var functions = template.FuncMap{}
+var functions = template.FuncMap{
+	"readableDate": render.ReadableDate,
+	"formatDate":   render.FormatDate,
+	"iterate":      render.Iterate,
+	"add":          render.Add,
+}
 
 var app config.AppConfig
 var session *scs.SessionManager
@@ -27,8 +32,11 @@ var errorLog *log.Logger
 var templatePath = "./../../templates"
 
 func TestMain(m *testing.M) {
-	// what am I going to put in the session
+	gob.Register(models.User{})
+	gob.Register(models.Room{})
 	gob.Register(models.Reservation{})
+	gob.Register(models.Restriction{})
+	gob.Register(map[string]int{})
 
 	// initialize loggers
 	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -48,11 +56,16 @@ func TestMain(m *testing.M) {
 
 	app.Session = session
 
+	mailChan := make(chan models.MailData)
+	app.MailChan = mailChan
+	defer close(mailChan)
+
+	listenForMail()
+
 	tmplCache, err := CreateTestTemplateCache()
 	if err != nil {
 		log.Fatal("Cannot create template cache")
 	}
-
 	app.TemplateCache = tmplCache
 	app.UseCache = true
 
@@ -61,6 +74,14 @@ func TestMain(m *testing.M) {
 	render.NewRenderer(&app)
 
 	os.Exit(m.Run())
+}
+
+func listenForMail() {
+	go func() {
+		for {
+			_ = <-app.MailChan
+		}
+	}()
 }
 
 func getRoutes() http.Handler {
@@ -84,6 +105,24 @@ func getRoutes() http.Handler {
 
 	mux.Get("/reservation-summary", Repo.ReservationSummary)
 
+	mux.Get("/user/login", Repo.GetShowLogin)
+	mux.Post("/user/login", Repo.PostShowLogin)
+
+	mux.Get("/user/logout", Repo.GetLogout)
+
+	mux.Get("/admin/dashboard", Repo.GetAdminDashboard)
+	mux.Get("/admin/reservations-all", Repo.GetAdminAllReservations)
+	mux.Get("/admin/reservations-new", Repo.GetAdminNewReservations)
+
+	mux.Get("/admin/process-reservations/{src}/{id}/do", Repo.GetAdminProcessReservation)
+	mux.Get("/admin/delete-reservations/{src}/{id}/do", Repo.GetAdminDeleteReservation)
+
+	mux.Get("/admin/reservations/{src}/{id}/show", Repo.GetAdminShowReservation)
+	mux.Post("/admin/reservations/{src}/{id}", Repo.PostAdminShowReservation)
+
+	mux.Get("/admin/reservations-calendar", Repo.GetAdminReservationsCalendar)
+	mux.Post("/admin/reservations-calendar", Repo.PostAdminReservationsCalendar)
+
 	FileServer := http.FileServer(http.Dir(filepath.Join(".", "static")))
 	mux.Handle("/static/*", http.StripPrefix("/static", FileServer))
 
@@ -95,6 +134,7 @@ func SessionLoad(next http.Handler) http.Handler {
 	return session.LoadAndSave(next)
 }
 
+// CreateTestTemplateCache creates a template cache as a map
 func CreateTestTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
@@ -109,17 +149,20 @@ func CreateTestTemplateCache() (map[string]*template.Template, error) {
 		name := filepath.Base(page)
 		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
+			log.Println(err)
 			return cache, err
 		}
 
 		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.tmpl", templatePath))
 		if err != nil {
+			log.Println(err)
 			return cache, err
 		}
 
 		if len(matches) > 0 {
 			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.layout.tmpl", templatePath))
 			if err != nil {
+				log.Println(err)
 				return cache, err
 			}
 		}

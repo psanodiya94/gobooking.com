@@ -1,0 +1,57 @@
+{{template "admin" .}}
+
+{{define "css"}}
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+{{end}}
+
+{{define "page-title"}}
+    All Reservations
+{{end}}
+
+{{define "content"}}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                {{$result := index .Data "reservations"}}
+
+                <table class="table table-striped table-hover" id="all-res">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Customer</th>
+                            <th>Room</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {{range $result}}
+                        <tr>
+                            <td>{{.Id}}</td>
+                            <td>
+                                <a href="/admin/reservations/all/{{.Id}}/show">{{.FirstName}} {{.LastName}}</a>
+                            </td>
+                            <td>{{.Room.RoomName}}</td>
+                            <td>{{readableDate .CheckIn}}</td>
+                            <td>{{readableDate .CheckOut}}</td>
+                        </tr>
+                    {{end}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+{{define "js"}}
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dataTable = new simpleDatatables.DataTable("#all-res", {
+                select: 3,
+                sort: "desc",
+                fixedHeight: true,
+            })
+        });
+    </script>
+{{end}}

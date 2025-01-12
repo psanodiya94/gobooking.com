@@ -29,16 +29,20 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.SQL.Close()
+	defer close(app.MailChan)
+
+	log.Println("Starting mail listener")
+
+	listenForMail()
 
 	log.Println("Starting application on port", port)
 
-	serve := &http.Server{
+	server := &http.Server{
 		Addr:    port,
 		Handler: routes(&app),
 	}
 
-	err = serve.ListenAndServe()
-	log.Fatal(err)
+	log.Fatal(server.ListenAndServe())
 }
 
 func run() (*driver.DataBase, error) {
@@ -47,6 +51,11 @@ func run() (*driver.DataBase, error) {
 	gob.Register(models.Room{})
 	gob.Register(models.Reservation{})
 	gob.Register(models.Restriction{})
+	gob.Register(map[string]int{})
+
+	// setup mail channel
+	mailChan := make(chan models.MailData)
+	app.MailChan = mailChan
 
 	// initialize loggers
 	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
