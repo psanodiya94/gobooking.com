@@ -32,11 +32,13 @@ var theTests = []struct {
 	{"login", "/user/login", "GET", http.StatusOK},
 	{"logout", "/user/logout", "GET", http.StatusOK},
 	{"dashboard", "/admin/dashboard", "GET", http.StatusOK},
-	{"new res", "/admin/reservations-new", "GET", http.StatusOK},
-	{"all res", "/admin/reservations-all", "GET", http.StatusOK},
-	{"show res", "/admin/reservations/new/1/show", "GET", http.StatusOK},
-	{"show res cal", "/admin/reservations-calendar", "GET", http.StatusOK},
-	{"show res cal with params", "/admin/reservations-calendar?y=2020&m=1", "GET", http.StatusOK},
+	{"new-res", "/admin/reservations-new", "GET", http.StatusOK},
+	{"all-res", "/admin/reservations-all", "GET", http.StatusOK},
+	{"show-res", "/admin/reservations/new/1/show", "GET", http.StatusOK},
+	{"show-res-cal", "/admin/reservations-calendar", "GET", http.StatusOK},
+	{"process-res-cal", "/admin/process-reservations/cal/1/do?y=2020&m=1", "GET", http.StatusOK},
+	{"delete-res-cal", "/admin/delete-reservations/cal/1/do?y=2020&m=1", "GET", http.StatusOK},
+	{"show-res-cal-with-params", "/admin/reservations-calendar?y=2020&m=1", "GET", http.StatusOK},
 }
 
 // TestHandlers tests all routes that don't require extra tests (gets)
@@ -148,13 +150,13 @@ var postReservationTests = []struct {
 	{
 		name: "valid-data",
 		postedData: url.Values{
-			"start_date": {"2050-01-01"},
-			"end_date":   {"2050-01-02"},
+			"check_in":   {"2050-01-01"},
+			"check_out":  {"2050-01-02"},
 			"first_name": {"John"},
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_Id":    {"1"},
+			"room_id":    {"1"},
 		},
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
@@ -170,13 +172,13 @@ var postReservationTests = []struct {
 	{
 		name: "invalid-start-date",
 		postedData: url.Values{
-			"start_date": {"invalid"},
-			"end_date":   {"2050-01-02"},
+			"check_in":   {"invalid"},
+			"check_out":  {"2050-01-02"},
 			"first_name": {"John"},
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_Id":    {"1"},
+			"room_id":    {"1"},
 		},
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
@@ -185,13 +187,13 @@ var postReservationTests = []struct {
 	{
 		name: "invalid-end-date",
 		postedData: url.Values{
-			"start_date": {"2050-01-01"},
-			"end_date":   {"end"},
+			"check_in":   {"2050-01-01"},
+			"check_out":  {"end"},
 			"first_name": {"John"},
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_Id":    {"1"},
+			"room_id":    {"1"},
 		},
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
@@ -200,13 +202,13 @@ var postReservationTests = []struct {
 	{
 		name: "invalid-room-Id",
 		postedData: url.Values{
-			"start_date": {"2050-01-01"},
-			"end_date":   {"2050-01-02"},
+			"check_in":   {"2050-01-01"},
+			"check_out":  {"2050-01-02"},
 			"first_name": {"John"},
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_Id":    {"invalid"},
+			"room_id":    {"invalid"},
 		},
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
@@ -215,28 +217,28 @@ var postReservationTests = []struct {
 	{
 		name: "invalid-data",
 		postedData: url.Values{
-			"start_date": {"2050-01-01"},
-			"end_date":   {"2050-01-02"},
+			"check_in":   {"2050-01-01"},
+			"check_out":  {"2050-01-02"},
 			"first_name": {"J"},
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_Id":    {"1"},
+			"room_id":    {"1"},
 		},
-		expectedResponseCode: http.StatusOK,
+		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         `action="/make-reservation"`,
 		expectedLocation:     "",
 	},
 	{
 		name: "database-insert-fails-reservation",
 		postedData: url.Values{
-			"start_date": {"2050-01-01"},
-			"end_date":   {"2050-01-02"},
+			"check_in":   {"2050-01-01"},
+			"check_out":  {"2050-01-02"},
 			"first_name": {"John"},
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_Id":    {"2"},
+			"room_id":    {"2"},
 		},
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
@@ -245,13 +247,13 @@ var postReservationTests = []struct {
 	{
 		name: "database-insert-fails-restriction",
 		postedData: url.Values{
-			"start_date": {"2050-01-01"},
-			"end_date":   {"2050-01-02"},
+			"check_in":   {"2050-01-01"},
+			"check_out":  {"2050-01-02"},
 			"first_name": {"John"},
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_Id":    {"1000"},
+			"room_id":    {"1000"},
 		},
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
@@ -267,7 +269,6 @@ func TestPostReservation(t *testing.T) {
 			req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(e.postedData.Encode()))
 		} else {
 			req, _ = http.NewRequest("POST", "/make-reservation", nil)
-
 		}
 		ctx := getCtx(req)
 		req = req.WithContext(ctx)
@@ -323,7 +324,7 @@ var testAvailabilityJSONData = []struct {
 		postedData: url.Values{
 			"start":   {"2050-01-01"},
 			"end":     {"2050-01-02"},
-			"room_Id": {"1"},
+			"room_id": {"1"},
 		},
 		expectedOK: false,
 	}, {
@@ -331,7 +332,7 @@ var testAvailabilityJSONData = []struct {
 		postedData: url.Values{
 			"start":   {"2040-01-01"},
 			"end":     {"2040-01-02"},
-			"room_Id": {"1"},
+			"room_id": {"1"},
 		},
 		expectedOK: true,
 	},
@@ -346,10 +347,40 @@ var testAvailabilityJSONData = []struct {
 		postedData: url.Values{
 			"start":   {"2060-01-01"},
 			"end":     {"2060-01-02"},
-			"room_Id": {"1"},
+			"room_id": {"1"},
 		},
 		expectedOK:      false,
 		expectedMessage: "Error querying database",
+	},
+	{
+		name: "parsing fails for start",
+		postedData: url.Values{
+			"start":   {"invalid"},
+			"end":     {"2060-01-02"},
+			"room_id": {"1"},
+		},
+		expectedOK:      false,
+		expectedMessage: "Error parsing start date",
+	},
+	{
+		name: "parsing fails for end",
+		postedData: url.Values{
+			"start":   {"2060-01-01"},
+			"end":     {"invalid"},
+			"room_id": {"1"},
+		},
+		expectedOK:      false,
+		expectedMessage: "Error parsing end date",
+	},
+	{
+		name: "parsing fails for room id",
+		postedData: url.Values{
+			"start":   {"2060-01-01"},
+			"end":     {"2060-01-02"},
+			"room_id": {"invalid"},
+		},
+		expectedOK:      false,
+		expectedMessage: "Error parsing room id",
 	},
 }
 
@@ -394,17 +425,17 @@ var testPostAvailabilityData = []struct {
 	{
 		name: "rooms not available",
 		postedData: url.Values{
-			"start": {"2050-01-01"},
-			"end":   {"2050-01-02"},
+			"check_in":  {"2050-01-01"},
+			"check_out": {"2050-01-02"},
 		},
 		expectedStatusCode: http.StatusSeeOther,
 	},
 	{
 		name: "rooms are available",
 		postedData: url.Values{
-			"start":   {"2040-01-01"},
-			"end":     {"2040-01-02"},
-			"room_Id": {"1"},
+			"check_in":  {"2040-01-01"},
+			"check_out": {"2040-01-02"},
+			"room_id":   {"1"},
 		},
 		expectedStatusCode: http.StatusOK,
 	},
@@ -416,25 +447,25 @@ var testPostAvailabilityData = []struct {
 	{
 		name: "start date wrong format",
 		postedData: url.Values{
-			"start":   {"invalid"},
-			"end":     {"2040-01-02"},
-			"room_Id": {"1"},
+			"check_in":  {"invalid"},
+			"check_out": {"2040-01-02"},
+			"room_id":   {"1"},
 		},
 		expectedStatusCode: http.StatusSeeOther,
 	},
 	{
 		name: "end date wrong format",
 		postedData: url.Values{
-			"start": {"2040-01-01"},
-			"end":   {"invalid"},
+			"check_in":  {"2040-01-01"},
+			"check_out": {"invalid"},
 		},
 		expectedStatusCode: http.StatusSeeOther,
 	},
 	{
 		name: "database query fails",
 		postedData: url.Values{
-			"start": {"2060-01-01"},
-			"end":   {"2060-01-02"},
+			"check_in":  {"2060-01-01"},
+			"check_out": {"2060-01-02"},
 		},
 		expectedStatusCode: http.StatusSeeOther,
 	},
@@ -443,7 +474,12 @@ var testPostAvailabilityData = []struct {
 // TestPostAvailability tests the PostAvailabilityHandler
 func TestPostAvailability(t *testing.T) {
 	for _, e := range testPostAvailabilityData {
-		req, _ := http.NewRequest("POST", "/search-availability", strings.NewReader(e.postedData.Encode()))
+		var req *http.Request
+		if e.postedData != nil {
+			req, _ = http.NewRequest("POST", "/search-availability", strings.NewReader(e.postedData.Encode()))
+		} else {
+			req, _ = http.NewRequest("POST", "/search-availability", nil)
+		}
 
 		// get the context with session
 		ctx := getCtx(req)
@@ -597,12 +633,27 @@ var bookRoomTests = []struct {
 }{
 	{
 		name:               "database-works",
-		url:                "/book-room?s=2050-01-01&e=2050-01-02&Id=1",
+		url:                "/book-room?s=2050-01-01&e=2050-01-02&id=1",
 		expectedStatusCode: http.StatusSeeOther,
 	},
 	{
 		name:               "database-fails",
-		url:                "/book-room?s=2040-01-01&e=2040-01-02&Id=4",
+		url:                "/book-room?s=2040-01-01&e=2040-01-02&id=4",
+		expectedStatusCode: http.StatusSeeOther,
+	},
+	{
+		name:               "start date invalid",
+		url:                "/book-room?s=invalid&e=2050-01-02&id=1",
+		expectedStatusCode: http.StatusSeeOther,
+	},
+	{
+		name:               "end date invalid",
+		url:                "/book-room?s=2050-01-01&e=invalid&id=2",
+		expectedStatusCode: http.StatusSeeOther,
+	},
+	{
+		name:               "id invalid",
+		url:                "/book-room?s=2050-01-01&e=2050-01-02&id=invalid",
 		expectedStatusCode: http.StatusSeeOther,
 	},
 }
@@ -645,14 +696,14 @@ var loginTests = []struct {
 }{
 	{
 		"valid-credentials",
-		"me@here.ca",
+		"admin@admin.com",
 		http.StatusSeeOther,
 		"",
 		"/",
 	},
 	{
 		"invalid-credentials",
-		"jack@nimble.com",
+		"me@here.com",
 		http.StatusSeeOther,
 		"",
 		"/user/login",
@@ -671,7 +722,7 @@ func TestLogin(t *testing.T) {
 	for _, e := range loginTests {
 		postedData := url.Values{}
 		postedData.Add("email", e.email)
-		postedData.Add("password", "password")
+		postedData.Add("password", "admin")
 
 		// create request
 		req, _ := http.NewRequest("POST", "/user/login", strings.NewReader(postedData.Encode()))
@@ -778,7 +829,7 @@ func TestAdminPostShowReservation(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		// call the handler
-		handler := http.HandlerFunc(Repo.GetAdminShowReservation)
+		handler := http.HandlerFunc(Repo.PostAdminShowReservation)
 		handler.ServeHTTP(rr, req)
 
 		if rr.Code != e.expectedResponseCode {
@@ -816,21 +867,27 @@ var adminPostReservationCalendarTests = []struct {
 	{
 		name: "cal",
 		postedData: url.Values{
-			"year":  {time.Now().Format("2006")},
-			"month": {time.Now().Format("01")},
+			"y": {time.Now().Format("2006")},
+			"m": {time.Now().Format("01")},
 			fmt.Sprintf("add_block_1_%s", time.Now().AddDate(0, 0, 2).Format("2006-01-2")): {"1"},
 		},
 		expectedResponseCode: http.StatusSeeOther,
 	},
 	{
-		name:                 "cal-blocks",
-		postedData:           url.Values{},
+		name: "cal-blocks",
+		postedData: url.Values{
+			"y": {time.Now().Format("2006")},
+			"m": {time.Now().Format("01")},
+		},
 		expectedResponseCode: http.StatusSeeOther,
 		blocks:               1,
 	},
 	{
-		name:                 "cal-res",
-		postedData:           url.Values{},
+		name: "cal-res",
+		postedData: url.Values{
+			"y": {time.Now().Format("2006")},
+			"m": {time.Now().Format("01")},
+		},
 		expectedResponseCode: http.StatusSeeOther,
 		reservations:         1,
 	},
@@ -882,81 +939,6 @@ func TestPostReservationCalendar(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		if rr.Code != e.expectedResponseCode {
-			t.Errorf("failed %s: expected code %d, but got %d", e.name, e.expectedResponseCode, rr.Code)
-		}
-
-	}
-}
-
-var adminProcessReservationTests = []struct {
-	name                 string
-	queryParams          string
-	expectedResponseCode int
-	expectedLocation     string
-}{
-	{
-		name:                 "process-reservation",
-		queryParams:          "",
-		expectedResponseCode: http.StatusSeeOther,
-		expectedLocation:     "",
-	},
-	{
-		name:                 "process-reservation-back-to-cal",
-		queryParams:          "?y=2021&m=12",
-		expectedResponseCode: http.StatusSeeOther,
-		expectedLocation:     "",
-	},
-}
-
-func TestAdminProcessReservation(t *testing.T) {
-	for _, e := range adminProcessReservationTests {
-		req, _ := http.NewRequest("GET", fmt.Sprintf("/admin/process-reservation/cal/1/do%s", e.queryParams), nil)
-		ctx := getCtx(req)
-		req = req.WithContext(ctx)
-
-		rr := httptest.NewRecorder()
-
-		handler := http.HandlerFunc(Repo.GetAdminProcessReservation)
-		handler.ServeHTTP(rr, req)
-
-		if rr.Code != http.StatusSeeOther {
-			t.Errorf("failed %s: expected code %d, but got %d", e.name, e.expectedResponseCode, rr.Code)
-		}
-	}
-}
-
-var adminDeleteReservationTests = []struct {
-	name                 string
-	queryParams          string
-	expectedResponseCode int
-	expectedLocation     string
-}{
-	{
-		name:                 "delete-reservation",
-		queryParams:          "",
-		expectedResponseCode: http.StatusSeeOther,
-		expectedLocation:     "",
-	},
-	{
-		name:                 "delete-reservation-back-to-cal",
-		queryParams:          "?y=2021&m=12",
-		expectedResponseCode: http.StatusSeeOther,
-		expectedLocation:     "",
-	},
-}
-
-func TestAdminDeleteReservation(t *testing.T) {
-	for _, e := range adminDeleteReservationTests {
-		req, _ := http.NewRequest("GET", fmt.Sprintf("/admin/process-reservation/cal/1/do%s", e.queryParams), nil)
-		ctx := getCtx(req)
-		req = req.WithContext(ctx)
-
-		rr := httptest.NewRecorder()
-
-		handler := http.HandlerFunc(Repo.GetAdminDeleteReservation)
-		handler.ServeHTTP(rr, req)
-
-		if rr.Code != http.StatusSeeOther {
 			t.Errorf("failed %s: expected code %d, but got %d", e.name, e.expectedResponseCode, rr.Code)
 		}
 	}

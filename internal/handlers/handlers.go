@@ -368,6 +368,13 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	room, err := repo.DB.GetRoomById(roomId)
+	if err != nil {
+		repo.App.Session.Put(r.Context(), "error", fmt.Sprintf("No room available by id : %d", roomId))
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
 	reservation := models.Reservation{
 		FirstName: r.Form.Get("first_name"),
 		LastName:  r.Form.Get("last_name"),
@@ -376,9 +383,8 @@ func (repo *Repository) PostReservation(w http.ResponseWriter, r *http.Request) 
 		CheckIn:   checkIn,
 		CheckOut:  checkOut,
 		RoomId:    roomId,
+		Room:      room,
 	}
-
-	reservation.Room.RoomName = r.Form.Get("room_name")
 
 	form := forms.New(r.PostForm)
 	form.Required("first_name", "last_name", "email")
@@ -662,7 +668,6 @@ func (repo *Repository) PostAdminShowReservation(w http.ResponseWriter, r *http.
 	} else {
 		http.Redirect(w, r, fmt.Sprintf("/admin/reservations-calendar?y=%s&m=%s", year, month), http.StatusSeeOther)
 	}
-
 }
 
 // GetAdminProcessReservation is the admin process reservation handler for get request

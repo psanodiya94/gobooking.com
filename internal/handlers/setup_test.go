@@ -100,6 +100,9 @@ func getRoutes() http.Handler {
 	mux.Post("/search-availability", Repo.PostAvailability)
 	mux.Post("/search-availability-json", Repo.JsonAvailability)
 
+	mux.Get("/choose-room/{id}", Repo.ChooseRoom)
+	mux.Get("/book-room", Repo.BookRoom)
+
 	mux.Get("/make-reservation", Repo.GetReservation)
 	mux.Post("/make-reservation", Repo.PostReservation)
 

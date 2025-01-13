@@ -91,6 +91,9 @@ func (psql *testdbPostgresRepo) UpdateUser(user models.User) error {
 }
 
 func (psql *testdbPostgresRepo) Authenticate(email, password string) (int, string, error) {
+	if email != "admin@admin.com" {
+		return 0, "", errors.New("invalid credentials")
+	}
 	return 1, "", nil
 }
 
@@ -105,8 +108,8 @@ func (psql *testdbPostgresRepo) AllNewReservations() ([]models.Reservation, erro
 }
 
 func (psql *testdbPostgresRepo) GetReservationById(id int) (models.Reservation, error) {
-	var res models.Reservation
-	return res, nil
+	var reservation models.Reservation
+	return reservation, nil
 }
 
 func (psql *testdbPostgresRepo) UpdateReservation(reservation models.Reservation) error {
@@ -123,11 +126,34 @@ func (psql *testdbPostgresRepo) UpdateProcessedForReservation(id, processed int)
 
 func (psql *testdbPostgresRepo) AllRooms() ([]models.Room, error) {
 	var rooms []models.Room
+	// dummy values
+	room := models.Room{
+		Id:       1,
+		RoomName: "General's Quarters",
+	}
+	rooms = append(rooms, room)
 	return rooms, nil
 }
 
 func (psql *testdbPostgresRepo) GetRestrictionsForRoomByDate(roomId int, start, end time.Time) ([]models.RoomRestriction, error) {
 	var restrictions []models.RoomRestriction
+	// dummy values
+	restriction := models.RoomRestriction{
+		Id:            1,
+		CheckIn:       start,
+		CheckOut:      end,
+		RoomId:        roomId,
+		RestrictionId: 1,
+	}
+	restrictions = append(restrictions, restriction)
+	restriction = models.RoomRestriction{
+		Id:            0,
+		CheckIn:       start,
+		CheckOut:      end,
+		RoomId:        roomId,
+		RestrictionId: 2,
+	}
+	restrictions = append(restrictions, restriction)
 	return restrictions, nil
 }
 
