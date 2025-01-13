@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/gob"
+	"flag"
+	"fmt"
 	"github.com/psanodiya94/gobooking.com/internal/config"
 	"github.com/psanodiya94/gobooking.com/internal/driver"
 	"github.com/psanodiya94/gobooking.com/internal/handlers"
@@ -53,6 +55,23 @@ func run() (*driver.DataBase, error) {
 	gob.Register(models.Restriction{})
 	gob.Register(map[string]int{})
 
+	// read flags
+	inProduction := flag.Bool("production", true, "application is in production")
+	useCache := flag.Bool("cache", true, "use template cache")
+	dbHost := flag.String("dbhost", "localhost", "database name")
+	dbName := flag.String("dbname", "", "database name")
+	dbUser := flag.String("dbuser", "", "database user")
+	dbPass := flag.String("dbpass", "", "database password")
+	dbPort := flag.String("dbport", "5432", "database port")
+	dbSSL := flag.String("dbssl", "disable", "database ssl settings (disable, prefer, require)")
+
+	flag.Parse()
+
+	if *dbName == "" || *dbUser == "" {
+		fmt.Println("Missing Required Flags")
+		os.Exit(1)
+	}
+
 	// setup mail channel
 	mailChan := make(chan models.MailData)
 	app.MailChan = mailChan
@@ -65,7 +84,8 @@ func run() (*driver.DataBase, error) {
 	app.ErrorLog = errorLog
 
 	// change this to true when in production
-	app.InProduction = false
+	app.InProduction = *inProduction
+	app.UseCache = *useCache
 
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
@@ -77,7 +97,11 @@ func run() (*driver.DataBase, error) {
 
 	// connect to database
 	log.Println("Connecting to database...")
-	db, err := driver.ConnectSql("host=localhost port=5432 dbname=gobookings user=postgres password=Rishirich11!")
+	conn := fmt.Sprintf(
+		"host=%s port=%s dbname=%s user=%s password=%s sslmode=%s",
+		*dbHost, *dbPort, *dbName, *dbUser, *dbPass, *dbSSL,
+	)
+	db, err := driver.ConnectSql(conn)
 	if err != nil {
 		log.Fatal("Can't connect to database! Dying...")
 		return nil, err
@@ -91,7 +115,6 @@ func run() (*driver.DataBase, error) {
 	}
 
 	app.TemplateCache = tmplCache
-	app.UseCache = false
 
 	repo := handlers.NewRepo(&app, db)
 

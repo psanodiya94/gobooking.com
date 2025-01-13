@@ -11,7 +11,7 @@ function build() {
 }
 
 function run() {
-    ./bookings
+    ./bookings -dbname=gobookings -dbuser=postgres -dbpass=Rishirich11! -cache=false -production=false
 }
 
 function test() {
